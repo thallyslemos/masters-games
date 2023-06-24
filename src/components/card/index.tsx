@@ -1,4 +1,5 @@
 import { gamesData } from "@/api";
+import Image from "next/image";
 
 export function CardsGrid() {
 const games = gamesData;
@@ -12,7 +13,7 @@ const games = gamesData;
           >
             <div className="overflow-hidden rounded-t-md">
 
-            <img
+            <Image width={350} height={180}
               className="w-full group-hover:scale-105 transition-all duration-300 "
               src={game.thumbnail}
               alt="image"

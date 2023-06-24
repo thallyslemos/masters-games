@@ -12,7 +12,10 @@ module.exports = {
       },
       colors:{
         'BLUE-1':'#1d42cf',
-        'BLUE-2':'#3888fc'
+        'BLUE-2':'#3888fc',
+        'LIGTH-BLUE': '#dcebff',
+        'GREY-BLUE': '#566384',
+        'DARK-BLUE': '#1f2f59'
       }
     },
   },

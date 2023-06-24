@@ -1,4 +1,5 @@
-import {  CardsGrid } from "@/components/card";
+import { gamesData } from "@/api";
+import { CardsGrid } from "@/components/cardsGrid";
 
 export default function Home() {
 
@@ -8,7 +9,7 @@ export default function Home() {
 
       App masters
       </div>
-      <CardsGrid />
+      <CardsGrid games={gamesData}/>
     </main>
   );
 }

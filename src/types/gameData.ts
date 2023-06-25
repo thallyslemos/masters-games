@@ -1,4 +1,4 @@
-type GameData = {
+export type GameData = {
     id: number,
     title: string,
     thumbnail: string,

@@ -1,7 +1,8 @@
 import { gamesData } from "@/api";
 import { GameCard } from "../gameCard";
+import { GameData } from "@/types/gameData";
 
-export function CardsGrid({games = gamesData}) {
+export function CardsGrid({games = gamesData}: any) {
   return (
     <>
       <div className="grid gap-3 lg:grid-cols-3 md:grid-cols-2 my-4">

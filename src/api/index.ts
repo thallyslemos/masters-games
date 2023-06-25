@@ -1,12 +1,17 @@
-  // const games = fetch(
-  //   "https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/",
-  //   { method: "GET", headers: { "dev-email-address": "thallys@thallys.com" } }
-  // ).then(response => {
-  //   if(response.ok){
-  //     return response.json()
-  //   }
-  // }).then(json => console.log(json)).catch(e=> console.log(e));
-  // console.log(games);
+export async function fetchWithTimeout(resource, options = {}) {
+  const { timeout = 8000 } = options;
+  
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal  
+  });
+  clearTimeout(id);
+
+  return response;
+}
 export const gamesData = [
     {
       id: 540,

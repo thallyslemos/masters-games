@@ -3,18 +3,18 @@ import Image from "next/image";
 export function GameCard({thumbnail, title,short_description, platform, publisher, release_date, developer, freetogame_profile_url, game_url, genre}: GameData){
     return(
         <div
-            className="w-full p-2 rounded-lg shadow-xl max-w-xs relative group overflow-hidden bg-gradient-to-tl to-LIGTH-BLUE from-white"
+            className="w-full p-2 rounded-lg drop-shadow-xl max-w-xs relative group overflow-hidden bg-gradient-to-t to-LIGTH-BLUE from-white"
           
           >
             <div className="overflow-hidden rounded-t-md">
 
             <Image width={350} height={180}
-              className="w-full group-hover:scale-105 transition-all duration-300 "
+              className="w-full group-hover:scale-105 transition-all duration-300"
               src={thumbnail}
               alt="image"
             />
             </div>
-            <div className="pl-2 mb-10 ">
+            <div className="pl-2 mb-12 ">
               <h4 className="text-xl font-semibold tracking-tight text-DARK-BLUE">
                 {title}
               </h4>

@@ -1,3 +1,4 @@
+import { GameData } from "@/types/gameData";
 import Image from "next/image";
 
 export function GameCard({thumbnail, title,short_description, platform, publisher, release_date, developer, freetogame_profile_url, game_url, genre}: GameData){

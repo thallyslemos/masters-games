@@ -10,11 +10,14 @@ export default function Home() {
   const [error, setError] = useState([false, ""]);
 
   useEffect(() => {
-    fetchWithTimeout("https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/", {
-      method: "GET",
-      headers: { "dev-email-address": "thallys@thallys.com" },
-      timeout: 2000
-    })
+    fetchWithTimeout(
+      "https://games-test-api-81e9fb0d564a.herokuapp.com/api/data/",
+      {
+        method: "GET",
+        headers: { "dev-email-address": "thallys@thallys.com" },
+      },
+      5000
+    )
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -31,7 +34,14 @@ export default function Home() {
         }
       })
       .then((json) => setGames(json))
-      .catch((e:DOMException) => {if(e.name == 'AbortError'){setError([true, "O servidor demorou para responder, tente mais tarde"])}})
+      .catch((e: DOMException) => {
+        if (e.name == "AbortError") {
+          setError([
+            true,
+            "O servidor demorou para responder, tente mais tarde",
+          ]);
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 

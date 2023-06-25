@@ -17,9 +17,9 @@ export function NavMenu() {
   }
   return (
     <>
-      <header className="sticky shadow-md min-h-20 inset-0 z-50 flex w-full bg-gradient-to-r from-BLUE-1/90 to-BLUE-2/90 text-white backdrop-blur-sm">
+      <header className="sticky shadow-md min-h-20 inset-0 z-50 flex w-full  bg-gradient-to-br from-LIGTH-BLUE/90 to-white/90 backdrop-blur-md text-BLUE-2">
         <div className="w-full flex-wrap items-center justify-between lg:flex ">
-          <div className="m-2 flex items-center justify-between">
+          <div className="m-2 flex items-center justify-between ">
             <GameLogo size={50} />
             <button
               className="flex items-center rounded px-3 py-2 hover:border-white lg:hidden"

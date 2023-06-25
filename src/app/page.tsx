@@ -1,13 +1,16 @@
 "use client";
 import { fetchWithTimeout } from "@/api";
-import { CardsGrid } from "@/components/cardsGrid";
-import { Loading } from "@/components/loading";
+import { CardsGrid, ErrorMessage,Loading } from "@/components";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [games, setGames] = useState(null);
-  const [error, setError] = useState([false, ""]);
+  const [error, setError] = useState({
+    isErr: false,
+    message: "Error",
+    status: "",
+  });
 
   useEffect(() => {
     fetchWithTimeout(
@@ -23,23 +26,28 @@ export default function Home() {
           return response.json();
         } else {
           response.status / 100 >= 5
-            ? setError([
-                true,
-                "O servidor fahou em responder, tente recarregar a página",
-              ])
-            : setError([
-                true,
-                "O servidor não conseguirá responder por agora, tente voltar novamente mais tarde",
-              ]);
+            ? setError({
+                isErr: true,
+                message:
+                  "O servidor fahou em responder, tente recarregar a página",
+                status: `${response.status}`,
+              })
+            : setError({
+                isErr: true,
+                message:
+                  "O servidor não conseguirá responder por agora, tente voltar novamente mais tarde",
+                status: `${response.status}`,
+              });
         }
       })
       .then((json) => setGames(json))
       .catch((e: DOMException) => {
         if (e.name == "AbortError") {
-          setError([
-            true,
-            "O servidor demorou para responder, tente mais tarde",
-          ]);
+          setError({
+            isErr: true,
+            message: "O servidor demorou para responder, tente mais tarde",
+            status: "AbortError",
+          });
         }
       })
       .finally(() => setLoading(false));
@@ -52,15 +60,8 @@ export default function Home() {
       </div>
       {loading ? (
         <Loading />
-      ) : error[0] ? (
-        <div role="alert" className="m-auto px-2">
-          <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
-            Erro
-          </div>
-          <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
-            <p>{error[1]}</p>
-          </div>
-        </div>
+      ) : error.isErr ? (
+        <ErrorMessage errorMessage={error.message} errorTitle={`Erro ${error.status}`} />
       ) : (
         <>
           <CardsGrid games={games} />

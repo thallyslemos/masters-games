@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Close, GameLogo, MenuIcon } from "../../../public/icons";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import useWindowDimensions from "@/useWindowDimensions";
 
 export function NavMenu() {

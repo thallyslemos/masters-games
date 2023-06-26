@@ -1,13 +1,25 @@
 "use client";
 import { fetchWithTimeout } from "@/api";
-import { CardsGrid } from "@/components/cardsGrid";
-import { Loading } from "@/components/loading";
-import { useEffect, useState } from "react";
+import {
+  CardsGrid,
+  ErrorMessage,
+  Loading,
+  TextButton,
+  TextInput,
+} from "@/components";
+import { GameData } from "@/types/gameData";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
-  const [games, setGames] = useState(null);
-  const [error, setError] = useState([false, ""]);
+  const [games, setGames] = useState<GameData[]>([]);
+  const [error, setError] = useState({
+    isErr: false,
+    message: "Error",
+    status: "",
+  });
+  const [q, setQ] = useState("");
+  const searchResult = useRef<GameData[]>([]);
 
   useEffect(() => {
     fetchWithTimeout(
@@ -23,48 +35,90 @@ export default function Home() {
           return response.json();
         } else {
           response.status / 100 >= 5
-            ? setError([
-                true,
-                "O servidor fahou em responder, tente recarregar a página",
-              ])
-            : setError([
-                true,
-                "O servidor não conseguirá responder por agora, tente voltar novamente mais tarde",
-              ]);
+            ? setError({
+                isErr: true,
+                message:
+                  "O servidor fahou em responder, tente recarregar a página",
+                status: `${response.status}`,
+              })
+            : setError({
+                isErr: true,
+                message:
+                  "O servidor não conseguirá responder por agora, tente voltar novamente mais tarde",
+                status: `${response.status}`,
+              });
         }
       })
-      .then((json) => setGames(json))
+      .then((json) => {
+        setGames(json);
+        searchResult.current = json;
+      })
       .catch((e: DOMException) => {
         if (e.name == "AbortError") {
-          setError([
-            true,
-            "O servidor demorou para responder, tente mais tarde",
-          ]);
+          setError({
+            isErr: true,
+            message: "O servidor demorou para responder, tente mais tarde",
+            status: "AbortError",
+          });
         }
       })
       .finally(() => setLoading(false));
   }, []);
 
+  function handleSearch(item: GameData[]) {
+    searchResult.current = item.filter((item: GameData) => {
+      if (item.title.toLowerCase().indexOf(q.toLowerCase()) > -1) {
+        return item;
+      }
+      setQ(' ');
+    });
+  }
+
+  function handleChange(e: any) {
+    e.preventDefault()
+    const newValue = e.target.value;
+    setQ(newValue);
+  }
+
+  function clearSearch() {
+    setQ('')
+    searchResult.current = []
+    handleSearch(games);
+  }
+  console.log(searchResult)
+  console.log(q)
   return (
     <main className="flex min-h-screen flex-col items-center justify-between">
-      <div className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-BLUE-1 to-BLUE-2">
-        App masters
+      <div className="flex flex-row my-2">
+        {/* <TextInput onInputChange={handleInputChange} /> */}
+        <div className="flex border border-LIGTH-BLUE rounded">
+      <input
+        type="text"
+        className="block w-full px-4 py-2 text-BLUE-1 bg-white border rounded-md focus:border-BLUE-2 focus:ring-LIGTH-BLUE focus:outline-none focus:ring focus:ring-opacity-40"
+        placeholder="Pesquisar..."
+        value={q}
+        onChange={(e) =>handleChange(e)}
+      />
+    </div>
+        <TextButton title="Pesquisar" onClickButton={() => handleSearch(games)} />
+        <TextButton title="Limpar" onClickButton={() => (clearSearch())} />
       </div>
       {loading ? (
         <Loading />
-      ) : error[0] ? (
-        <div role="alert" className="m-auto px-2">
-          <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
-            Erro
-          </div>
-          <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
-            <p>{error[1]}</p>
-          </div>
-        </div>
-      ) : (
+      ) : error.isErr ? (
+        <ErrorMessage
+          errorMessage={error.message}
+          errorTitle={`Erro ${error.status}`}
+        />
+      ) : searchResult.current.length > 0 ? (
         <>
-          <CardsGrid games={games} />
+          <CardsGrid games={searchResult.current} />
         </>
+      ) : (
+        <ErrorMessage
+          errorMessage="Não foram encontrados títulos para a pesquisa informada"
+          errorTitle="Erro na pesquisa"
+        />
       )}
     </main>
   );

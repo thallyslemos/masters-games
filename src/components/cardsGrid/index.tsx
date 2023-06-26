@@ -1,7 +1,11 @@
 import { GameData } from "@/types/gameData";
-import { ErrorMessage, GameCard } from "@/components";
+import { GameCard } from "@/components";
+import { useEffect } from "react";
 
 export function CardsGrid({ games = [] }: any) {
+useEffect(()=>{
+
+}, [games])
   return (
     <div className="grid gap-3 lg:grid-cols-3 md:grid-cols-2 my-4">
       {games.map((game: GameData, index: any) => (

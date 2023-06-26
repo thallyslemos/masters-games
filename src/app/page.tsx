@@ -65,23 +65,43 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  function search(item: GameData[]) {
+  function handleSearch(item: GameData[]) {
     searchResult.current = item.filter((item: GameData) => {
       if (item.title.toLowerCase().indexOf(q.toLowerCase()) > -1) {
         return item;
       }
-      setQ("");
+      setQ(' ');
     });
   }
 
-  function handleInputChange(value: any) {
-    setQ(value);
+  function handleChange(e: any) {
+    e.preventDefault()
+    const newValue = e.target.value;
+    setQ(newValue);
   }
+
+  function clearSearch() {
+    setQ('')
+    searchResult.current = []
+    handleSearch(games);
+  }
+  console.log(searchResult)
+  console.log(q)
   return (
     <main className="flex min-h-screen flex-col items-center justify-between">
       <div className="flex flex-row my-2">
-        <TextInput onInputChange={handleInputChange} />
-        <TextButton onClickButton={() => search(games)} />
+        {/* <TextInput onInputChange={handleInputChange} /> */}
+        <div className="flex border border-LIGTH-BLUE rounded">
+      <input
+        type="text"
+        className="block w-full px-4 py-2 text-BLUE-1 bg-white border rounded-md focus:border-BLUE-2 focus:ring-LIGTH-BLUE focus:outline-none focus:ring focus:ring-opacity-40"
+        placeholder="Pesquisar..."
+        value={q}
+        onChange={(e) =>handleChange(e)}
+      />
+    </div>
+        <TextButton title="Pesquisar" onClickButton={() => handleSearch(games)} />
+        <TextButton title="Limpar" onClickButton={() => (clearSearch())} />
       </div>
       {loading ? (
         <Loading />

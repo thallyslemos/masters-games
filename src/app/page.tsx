@@ -1,16 +1,25 @@
 "use client";
 import { fetchWithTimeout } from "@/api";
-import { CardsGrid, ErrorMessage,Loading } from "@/components";
-import { useEffect, useState } from "react";
+import {
+  CardsGrid,
+  ErrorMessage,
+  Loading,
+  TextButton,
+  TextInput,
+} from "@/components";
+import { GameData } from "@/types/gameData";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
-  const [games, setGames] = useState(null);
+  const [games, setGames] = useState<GameData[]>([]);
   const [error, setError] = useState({
     isErr: false,
     message: "Error",
     status: "",
   });
+  const [q, setQ] = useState("");
+  const searchResult = useRef<GameData[]>([]);
 
   useEffect(() => {
     fetchWithTimeout(
@@ -40,7 +49,10 @@ export default function Home() {
               });
         }
       })
-      .then((json) => setGames(json))
+      .then((json) => {
+        setGames(json);
+        searchResult.current = json;
+      })
       .catch((e: DOMException) => {
         if (e.name == "AbortError") {
           setError({
@@ -53,19 +65,40 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
+  function search(item: GameData[]) {
+    searchResult.current = item.filter((item: GameData) => {
+      if (item.title.toLowerCase().indexOf(q.toLowerCase()) > -1) {
+        return item;
+      }
+      setQ("");
+    });
+  }
+
+  function handleInputChange(value: any) {
+    setQ(value);
+  }
   return (
     <main className="flex min-h-screen flex-col items-center justify-between">
-      <div className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-BLUE-1 to-BLUE-2">
-        App masters
+      <div className="flex flex-row my-2">
+        <TextInput onInputChange={handleInputChange} />
+        <TextButton onClickButton={() => search(games)} />
       </div>
       {loading ? (
         <Loading />
       ) : error.isErr ? (
-        <ErrorMessage errorMessage={error.message} errorTitle={`Erro ${error.status}`} />
-      ) : (
+        <ErrorMessage
+          errorMessage={error.message}
+          errorTitle={`Erro ${error.status}`}
+        />
+      ) : searchResult.current.length > 0 ? (
         <>
-          <CardsGrid games={games} />
+          <CardsGrid games={searchResult.current} />
         </>
+      ) : (
+        <ErrorMessage
+          errorMessage="Não foram encontrados títulos para a pesquisa informada"
+          errorTitle="Erro na pesquisa"
+        />
       )}
     </main>
   );
